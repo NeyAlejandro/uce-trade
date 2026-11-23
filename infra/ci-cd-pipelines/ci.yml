@@ -1,0 +1,35 @@
+name: Continuous Integration (CI)
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - "feature/**"
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  validate-repository:
+    name: Repository & Docker Config Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify project directory structure
+        run: |
+          test -d frontend/landing
+          test -d frontend/web-app
+          test -d backend/api-gateway
+          test -d backend/services
+          test -d infra
+          test -f README.md
+          test -f .gitignore
+          test -f .github/pull_request_template.md
+
+      - name: Validate Docker Compose syntax
+        run: |
+          docker compose -f infra/docker-compose.yml config --quiet

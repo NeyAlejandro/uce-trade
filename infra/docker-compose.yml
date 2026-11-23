@@ -1,0 +1,44 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: uce-trade-postgres
+    environment:
+      POSTGRES_DB: ucetrade
+      POSTGRES_USER: ucetrade
+      POSTGRES_PASSWORD: ucetrade_dev_password
+    ports:
+      - "5432:5432"
+    networks:
+      - uce-trade-net
+
+  mongodb:
+    image: mongo:7
+    container_name: uce-trade-mongodb
+    ports:
+      - "27017:27017"
+    networks:
+      - uce-trade-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: uce-trade-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - uce-trade-net
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    container_name: uce-trade-keycloak
+    command: start-dev
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8080:8080"
+    networks:
+      - uce-trade-net
+
+networks:
+  uce-trade-net:
+    driver: bridge
