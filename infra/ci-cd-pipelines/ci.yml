@@ -24,7 +24,7 @@ jobs:
           test -d frontend/landing
           test -d frontend/web-app
           test -d backend/api-gateway
-          test -d backend/services
+          test -d backend/backend
           test -d infra
           test -f README.md
           test -f .gitignore

@@ -10,16 +10,16 @@
   - **Web Application (`frontend/web-app/`):** Responsive React PWA + TanStack Query, packaged for Web, Desktop (Tauri), and Mobile (Capacitor).
   - **Landing Page (`frontend/landing/`):** Static Jamstack informative portal built with Astro.
 - **Backend (`backend/`):**
-  - **API Gateway (`backend/api-gateway/`):** Single entry point handling routing, CORS, and rate limiting.
-  - **Microservices (`backend/services/`):** Java 21 + Spring Boot microservices structured under Hexagonal Architecture (Ports & Adapters), communicating synchronously via REST/GraphQL/gRPC and asynchronously via Kafka/RabbitMQ.
+  - **API Gateway (`backend/api-gateway/`):** Single entry point handling routing, CORS, and rate limiting (`NFR-11`).
+  - **Modular Monolith (`backend/backend/`):** Single Java 21 + Spring Boot application organized into domain modules (`M1`–`M13`) following Hexagonal Architecture (Ports & Adapters), exposing REST and GraphQL APIs and communicating asynchronously across Command/Query modules via an event bus (Kafka/RabbitMQ) (`TC-01`, `TC-03`, `NFR-07`, `NFR-08`, `NFR-09`).
 - **Identity & Automation (`infra/`):**
   - **Keycloak:** Identity provider handling authentication and role assignment (`UCE Admin`, `UCE Student`, `UCE Client`).
   - **n8n:** Business process automation for transactional emails and auditing workflows.
-- **Polyglot Persistence Layer:**
+- **Polyglot Persistence Layer (`NFR-10`):**
   - **PostgreSQL:** Core transactional data, Stripe billing records, and immutable audit logs.
-  - **MongoDB:** Real-time chat history and user interactions.
+  - **MongoDB:** Real-time chat history and user notifications inbox.
   - **Elasticsearch:** Sub-200ms predictive search and catalog indexing.
-  - **Redis:** Distributed caching and real-time session management.
+  - **Redis:** Distributed caching and real-time WebSocket/MQTT session management.
 
 ---
 
@@ -28,17 +28,17 @@
 ```text
 uce-trade/
 ├── .github/
-│   ├── workflows/
-│   │   ├── ci.yml                     # Continuous Integration (Build, Lint, Test)
-│   │   └── cd.yml                     # Continuous Deployment (Docker Registry & VPS Deploy)
 │   └── pull_request_template.md       # Standardized Pull Request checklist
 ├── frontend/
 │   ├── landing/                       # Astro Jamstack landing page
 │   └── web-app/                       # React PWA multi-platform client
 ├── backend/
 │   ├── api-gateway/                   # API Gateway service
-│   └── services/                      # Spring Boot domain microservices
+│   └── backend/                       # Spring Boot modular monolith (M1-M13)
 ├── infra/
+│   ├── ci-cd-pipelines/               # GitHub Actions CI & CD workflow definitions
+│   │   ├── ci.yml                     # Continuous Integration (Build, Lint, Test)
+│   │   └── cd.yml                     # Continuous Deployment (Docker Registry & VPS Deploy)
 │   ├── docker-compose.yml             # Base multi-container setup
 │   └── keycloak/                      # Keycloak realm definitions
 ├── .gitignore                         # Ignore rules for Java, Node, Docker, and IDEs
