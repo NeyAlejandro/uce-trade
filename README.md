@@ -8,18 +8,20 @@
 
 - **Frontend (`frontend/`):**
   - **Web Application (`frontend/web-app/`):** Responsive React PWA + TanStack Query, packaged for Web, Desktop (Tauri), and Mobile (Capacitor).
-  - **Landing Page (`frontend/landing/`):** Static Jamstack informative portal built with Astro.
+  - **Landing Page (`frontend/landing/`):** Static Jamstack informative portal built with Astro and connected to a Headless CMS (`NFR-06`).
 - **Backend (`backend/`):**
   - **API Gateway (`backend/api-gateway/`):** Single entry point handling routing, CORS, and rate limiting (`NFR-11`).
-  - **Modular Monolith (`backend/backend/`):** Single Java 21 + Spring Boot application organized into domain modules (`M1`–`M13`) following Hexagonal Architecture (Ports & Adapters), exposing REST and GraphQL APIs and communicating asynchronously across Command/Query modules via an event bus (Kafka/RabbitMQ) (`TC-01`, `TC-03`, `NFR-07`, `NFR-08`, `NFR-09`).
-- **Identity & Automation (`infra/`):**
+  - **Modular Monolith (`backend/backend/`):** Single Java 21 + Spring Boot application organized into domain modules (`M1`–`M13`) following Hexagonal Architecture (Ports & Adapters), exposing REST, GraphQL (`/graphql`), and **WebSocket + STOMP (`/ws`)** endpoints, and communicating asynchronously across Command/Query modules via **RabbitMQ** (`TC-01`, `TC-03`, `NFR-04`, `NFR-07`, `NFR-08`, `NFR-09`).
+- **Identity, Messaging & Automation (`infra/`):**
   - **Keycloak:** Identity provider handling authentication and role assignment (`UCE Admin`, `UCE Student`, `UCE Client`).
-  - **n8n:** Business process automation for transactional emails and auditing workflows.
-- **Polyglot Persistence Layer (`NFR-10`):**
-  - **PostgreSQL:** Core transactional data, Stripe billing records, and immutable audit logs.
-  - **MongoDB:** Real-time chat history and user notifications inbox.
-  - **Elasticsearch:** Sub-200ms predictive search and catalog indexing.
-  - **Redis:** Distributed caching and real-time WebSocket/MQTT session management.
+  - **RabbitMQ:** Lightweight AMQP event bus decoupling Command (write) and Query (read) modules inside the monolith (`NFR-07`, `NFR-08`).
+  - **n8n:** Business process automation for transactional PDF invoice emails and auditing workflows (`FR-17`, `FR-32`).
+- **Polyglot Persistence Layer (`NFR-10`) & External Storage:**
+  - **PostgreSQL:** Core transactional data, Stripe billing records, append-only `audit_logs` (`NFR-05`), Medallion analytics layers (`Bronze`, `Silver`, `Gold` — `FR-27`), and `pgvector` *(to be confirmed for AI RAG search `FR-33`)*.
+  - **MongoDB:** Real-time chat history (`conversations`, `chat_messages`) and user notifications inbox (`notifications`).
+  - **Elasticsearch:** Sub-200ms predictive search and catalog indexing (`venture_search_index`).
+  - **Redis:** Distributed caching (`catalog:featured`, `config:commission:current`), rate limiting, and real-time **WebSocket + STOMP** session management.
+  - **AWS S3 (Object Storage):** Stores binary files (venture gallery images, user avatars, and generated PDF invoices), while PostgreSQL stores only their URLs.
 
 ---
 
@@ -68,13 +70,3 @@ docker compose -f infra/docker-compose.yml up -d
 1. **`main` (Production):** Protected branch containing production-ready code. Every weekly sprint reaches `main` via an approved Pull Request before Thursday at 6:00 PM on demo day.
 2. **`develop` (Integration & QA):** Main integration branch deployed automatically to the QA/Staging environment.
 3. **`feature/<UT-ID>-<description>`:** Feature branches created from `develop` linked to a Jira issue key (e.g., `feature/UT-8-cicd-setup`).
-
-### Pull Request Process
-
-1. Create a feature branch from `develop`:
-   ```bash
-   git checkout -b feature/UT-XX-short-description develop
-   ```
-2. Commit changes following Conventional Commits (e.g., `feat(UT-8): add initial CI/CD pipeline`).
-3. Open a Pull Request targeting `develop` and complete the PR checklist.
-4. For weekly sprint releases, open a Pull Request from `develop` to `main` for team review and approval.
