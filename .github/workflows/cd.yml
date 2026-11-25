@@ -1,0 +1,29 @@
+name: Continuous Deployment (CD)
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+
+jobs:
+  deploy:
+    name: Build Images & Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Determine target environment
+        id: env
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "target=production" >> $GITHUB_OUTPUT
+          else
+            echo "target=qa" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Validate deployment configuration for ${{ steps.env.outputs.target }}
+        run: |
+          echo "Preparing container rollout for environment: ${{ steps.env.outputs.target }}"
+          docker compose -f infra/docker-compose.yml config --quiet
