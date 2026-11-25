@@ -1,4 +1,4 @@
-# Spring Boot Modular Monolith (`backend/backend`)
+# Spring Boot Modular Monolith (`backend/uce-trade-api`)
 
 Single Java 21 + Spring Boot **Modular Monolith** application organized into domain modules (`M1`–`M13`) following Hexagonal Architecture (`TC-01`, `NFR-08`, `NFR-09`):
 
@@ -11,4 +11,4 @@ Single Java 21 + Spring Boot **Modular Monolith** application organized into dom
 - **M9 – Analytics & Dashboards** (`FR-24` – `FR-27`)
 - **M10 – Audit & Traceability** (`FR-28` – `FR-30`)
 - **M12 – Automation Integration (n8n)** (`FR-32`)
-- **M13 – AI Integration (RAG / LLM / MCP)** (`FR-33` – `FR-35`)
+- **M13 – AI Integration (RAG / LLM / MCP — To be confirmed)** (`FR-33` – `FR-35`)

@@ -1,0 +1,34 @@
+# Local Development Overrides (docker-compose.dev.yml)
+# Usage: docker compose -f infra/docker-compose.yml -f infra/docker-compose.dev.yml up -d
+
+services:
+  postgres:
+    environment:
+      POSTGRES_DB: ucetrade_dev
+      POSTGRES_USER: ucetrade
+      POSTGRES_PASSWORD: ucetrade_dev_password
+    ports:
+      - "5432:5432"
+
+  mongodb:
+    ports:
+      - "27017:27017"
+
+  redis:
+    ports:
+      - "6379:6379"
+
+  rabbitmq:
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  keycloak:
+    command: start-dev --import-realm
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import:ro
+    ports:
+      - "8080:8080"

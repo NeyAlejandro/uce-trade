@@ -11,9 +11,9 @@
   - **Landing Page (`frontend/landing/`):** Static Jamstack informative portal built with Astro and connected to a Headless CMS (`NFR-06`).
 - **Backend (`backend/`):**
   - **API Gateway (`backend/api-gateway/`):** Single entry point handling routing, CORS, and rate limiting (`NFR-11`).
-  - **Modular Monolith (`backend/backend/`):** Single Java 21 + Spring Boot application organized into domain modules (`M1`–`M13`) following Hexagonal Architecture (Ports & Adapters), exposing REST, GraphQL (`/graphql`), and **WebSocket + STOMP (`/ws`)** endpoints, and communicating asynchronously across Command/Query modules via **RabbitMQ** (`TC-01`, `TC-03`, `NFR-04`, `NFR-07`, `NFR-08`, `NFR-09`).
+  - **Modular Monolith (`backend/uce-trade-api/`):** Single Java 21 + Spring Boot application organized into domain modules (`M1`–`M13`) following Hexagonal Architecture (Ports & Adapters), exposing REST, GraphQL (`/graphql`), and **WebSocket + STOMP (`/ws`)** endpoints, and communicating asynchronously across Command/Query modules via **RabbitMQ** (`TC-01`, `TC-03`, `NFR-04`, `NFR-07`, `NFR-08`, `NFR-09`).
 - **Identity, Messaging & Automation (`infra/`):**
-  - **Keycloak:** Identity provider handling authentication and role assignment (`UCE Admin`, `UCE Student`, `UCE Client`).
+  - **Keycloak (`infra/keycloak/`):** Identity provider handling authentication and role assignment (`UCE Admin`, `UCE Student`, `UCE Client`).
   - **RabbitMQ:** Lightweight AMQP event bus decoupling Command (write) and Query (read) modules inside the monolith (`NFR-07`, `NFR-08`).
   - **n8n:** Business process automation for transactional PDF invoice emails and auditing workflows (`FR-17`, `FR-32`).
 - **Polyglot Persistence Layer (`NFR-10`) & External Storage:**
@@ -30,18 +30,19 @@
 ```text
 uce-trade/
 ├── .github/
+│   ├── workflows/
+│   │   ├── ci.yml                     # Continuous Integration (Build, Lint, Test)
+│   │   └── cd.yml                     # Continuous Deployment (Docker Registry & VPS Deploy)
 │   └── pull_request_template.md       # Standardized Pull Request checklist
 ├── frontend/
 │   ├── landing/                       # Astro Jamstack landing page
 │   └── web-app/                       # React PWA multi-platform client
 ├── backend/
 │   ├── api-gateway/                   # API Gateway service
-│   └── backend/                       # Spring Boot modular monolith (M1-M13)
+│   └── uce-trade-api/                 # Spring Boot modular monolith (M1-M13)
 ├── infra/
-│   ├── ci-cd-pipelines/               # GitHub Actions CI & CD workflow definitions
-│   │   ├── ci.yml                     # Continuous Integration (Build, Lint, Test)
-│   │   └── cd.yml                     # Continuous Deployment (Docker Registry & VPS Deploy)
 │   ├── docker-compose.yml             # Base multi-container setup
+│   ├── docker-compose.dev.yml         # Local development overrides
 │   └── keycloak/                      # Keycloak realm definitions
 ├── .gitignore                         # Ignore rules for Java, Node, Docker, and IDEs
 └── README.md                          # Project overview and setup instructions
@@ -60,7 +61,11 @@ uce-trade/
 ### Running with Docker Compose
 
 ```bash
+# Base stack
 docker compose -f infra/docker-compose.yml up -d
+
+# Local development with overrides
+docker compose -f infra/docker-compose.yml -f infra/docker-compose.dev.yml up -d
 ```
 
 ---

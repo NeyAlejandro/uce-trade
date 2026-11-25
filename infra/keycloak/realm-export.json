@@ -1,0 +1,22 @@
+{
+  "realm": "uce-trade",
+  "enabled": true,
+  "registrationAllowed": true,
+  "loginWithEmailAllowed": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "UCE_ADMIN",
+        "description": "Platform Administrator and Venture Moderator (FR-01, FR-07, FR-38)"
+      },
+      {
+        "name": "UCE_STUDENT",
+        "description": "UCE Student Entrepreneur (@uce.edu.ec) (FR-01, FR-02)"
+      },
+      {
+        "name": "UCE_CLIENT",
+        "description": "External Client / Buyer (FR-01, FR-03)"
+      }
+    ]
+  }
+}
