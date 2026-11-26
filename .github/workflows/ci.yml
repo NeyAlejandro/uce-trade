@@ -13,16 +13,21 @@ on:
 
 jobs:
   build-and-unit-tests:
-    name: 1. Build, Lint & Unit Tests
+    name: 1. Build Micro-Frontends, WASM, Monolith & Unit Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Verify monorepo skeleton & configuration files
+      - name: Verify Micro-Frontends (NFR-20), WASM (NFR-21) & Modular Monolith structure
         run: |
           test -d frontend/landing
-          test -d frontend/web-app
+          test -d frontend/web-app/shell
+          test -d frontend/web-app/mf-marketplace
+          test -d frontend/web-app/mf-chat
+          test -d frontend/web-app/mf-seller
+          test -d frontend/web-app/mf-admin
+          test -d frontend/web-app/wasm-image-compressor
           test -d backend/api-gateway
           test -d backend/uce-trade-api
           test -d infra/keycloak
@@ -38,22 +43,22 @@ jobs:
           docker compose -f infra/docker-compose.yml -f infra/docker-compose.dev.yml config --quiet
 
   functional-and-e2e-tests:
-    name: 2. Functional, Integration & Playwright E2E Tests
+    name: 2. Functional, Integration & Playwright Micro-Frontend E2E Tests
     runs-on: ubuntu-latest
     needs: build-and-unit-tests
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run Functional & API Contract Checks (Testcontainers / REST / GraphQL)
+      - name: Run Functional & OpenAPI Contract Checks (Testcontainers / REST / GraphQL)
         run: |
           echo "Running functional & module integration checks for backend/uce-trade-api..."
           test -f backend/uce-trade-api/README.md
 
-      - name: Run End-to-End (E2E) UI Suite (Playwright)
+      - name: Run End-to-End (E2E) UI Suite across Shell & Micro-Frontends (Playwright)
         run: |
-          echo "Executing Playwright E2E user journey verification across frontend/web-app and frontend/landing..."
-          test -f frontend/web-app/README.md
+          echo "Executing Playwright E2E user journey verification across Shell, mf-marketplace, mf-chat, mf-seller, mf-admin and Astro landing..."
+          test -f frontend/web-app/shell/README.md
 
   load-and-security-tests:
     name: 3. Load Testing (k6) & Security Scan (OWASP ZAP)
@@ -65,8 +70,8 @@ jobs:
 
       - name: Execute Performance & Load Test Thresholds (k6)
         run: |
-          echo "Validating k6 load test thresholds: p(95) < 200ms for predictive search (NFR-03) and >=99% availability under concurrent load..."
+          echo "Validating k6 load test thresholds: p(95) < 200ms for predictive search (NFR-03) and >=99% availability across >=2 backend instances (NFR-13, NFR-24)..."
 
       - name: Run OWASP Top 10 Security & Vulnerability Baseline Check (OWASP ZAP)
         run: |
-          echo "Running OWASP dependency & ZAP baseline security verification (A01-A10 compliance)..."
+          echo "Running OWASP dependency & ZAP baseline security verification (A01-A10 compliance - NFR-25)..."

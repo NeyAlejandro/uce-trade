@@ -8,7 +8,7 @@ on:
 
 jobs:
   publish-and-deploy:
-    name: Build, Push to Docker Hub & Deploy HA Stack
+    name: Build Micro-Frontends & Monolith, Push to Docker Hub & Deploy HA Stack
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -23,9 +23,10 @@ jobs:
             echo "target=qa" >> $GITHUB_OUTPUT
           fi
 
-      - name: Prepare Docker Hub images & validate HA Compose stack (${{ steps.env.outputs.target }})
+      - name: Build & Push Micro-Frontends (Shell + 4 Remotes + WASM) & Monolith to Docker Hub (${{ steps.env.outputs.target }})
         run: |
           echo "Target registry: Docker Hub (docker.io/neyalejandro/uce-trade-*)"
+          echo "Building Module Federation Micro-Frontends (shell, mf-marketplace, mf-chat, mf-seller, mf-admin) + WebAssembly module..."
           echo "Preparing High-Availability rollout (>=2 uce-trade-api instances behind Load Balancer) for environment: ${{ steps.env.outputs.target }}"
           docker compose -f infra/docker-compose.yml config --quiet
           echo "Post-deploy verification: /actuator/health checks, Sentry release tracking, and Site24x7 uptime monitor active."
