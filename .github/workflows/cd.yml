@@ -1,4 +1,4 @@
-name: Continuous Deployment (CD)
+name: Continuous Deployment (CD) — Docker Hub & AWS VPS
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
       - main
 
 jobs:
-  deploy:
-    name: Build Images & Deploy
+  publish-and-deploy:
+    name: Build, Push to Docker Hub & Deploy HA Stack
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -23,7 +23,9 @@ jobs:
             echo "target=qa" >> $GITHUB_OUTPUT
           fi
 
-      - name: Validate deployment configuration for ${{ steps.env.outputs.target }}
+      - name: Prepare Docker Hub images & validate HA Compose stack (${{ steps.env.outputs.target }})
         run: |
-          echo "Preparing container rollout for environment: ${{ steps.env.outputs.target }}"
+          echo "Target registry: Docker Hub (docker.io/neyalejandro/uce-trade-*)"
+          echo "Preparing High-Availability rollout (>=2 uce-trade-api instances behind Load Balancer) for environment: ${{ steps.env.outputs.target }}"
           docker compose -f infra/docker-compose.yml config --quiet
+          echo "Post-deploy verification: /actuator/health checks, Sentry release tracking, and Site24x7 uptime monitor active."

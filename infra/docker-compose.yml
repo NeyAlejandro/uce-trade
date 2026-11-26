@@ -1,8 +1,8 @@
-# Base Multi-Container Orchestration for UCE Trade (NFR-17)
-# Includes: PostgreSQL 16, MongoDB 7, Redis 7, RabbitMQ 3.13, and Keycloak 26
+# Base Multi-Container Orchestration for UCE Trade (NFR-13, NFR-17)
+# Includes: PostgreSQL 16 + pgvector, MongoDB 7, Redis 7, RabbitMQ 3.13, and Keycloak 26
 services:
   postgres:
-    image: postgres:16-alpine
+    image: pgvector/pgvector:pg16
     container_name: uce-trade-postgres
     environment:
       POSTGRES_DB: ucetrade
